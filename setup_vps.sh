@@ -2,7 +2,7 @@
 # Одноразовая настройка автодеплоя на VPS. Запускать от root: bash setup_vps.sh
 set -e
 apt-get install -y -q git >/dev/null
-git config --global --add safe.directory /opt/fitbot
+git config --system --add safe.directory /opt/fitbot
 cd /opt/fitbot
 [ -f /root/.ssh/fitbot_deploy ] || ssh-keygen -t ed25519 -N "" -f /root/.ssh/fitbot_deploy -C fitbot-deploy -q
 cat > /root/.ssh/config.d_fitbot <<'C'

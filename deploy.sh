@@ -1,6 +1,7 @@
 #!/bin/bash
 # Автодеплой: новый коммит -> pull -> validate + тесты -> restart. При сбое откат на прошлый коммит.
 set -u
+export HOME=/root
 cd /opt/fitbot
 PY=venv/bin/python
 LOG="logger -t fitbot-deploy"
