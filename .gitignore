@@ -1,0 +1,6 @@
+.env
+progress.json
+progress.json.broken.*
+venv/
+__pycache__/
+*.pyc

@@ -1,0 +1,15 @@
+[Unit]
+Description=Fitness Telegram bot
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=fitbot
+WorkingDirectory=/opt/fitbot
+ExecStartPre=/opt/fitbot/venv/bin/python validate.py
+ExecStart=/opt/fitbot/venv/bin/python bot.py
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
