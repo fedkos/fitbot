@@ -442,7 +442,8 @@ async def cmd_help(msg: Message) -> None:
         "/stats — прогресс и график\n"
         "/quick — разовая тренировка на 10 минут\n"
         "/test — контрольный тест\n"
-        "/time am 07:30 — время утреннего напоминания (pm для вечернего)",
+        "/time am 07:30 — время утреннего напоминания (pm для вечернего)\n"
+        "/version — какая версия бота запущена",
         reply_markup=menu_kb())
 
 
@@ -501,6 +502,17 @@ async def cmd_weight(msg: Message, command: CommandObject) -> None:
     else:
         awaiting[msg.from_user.id] = {"kind": "weight"}
         await msg.answer("Введи вес в кг, например 92.4")
+
+
+@router.message(Command("version"))
+async def cmd_version(msg: Message) -> None:
+    import subprocess
+    try:
+        v = subprocess.run(["git", "log", "-1", "--pretty=%h %cd %s", "--date=format:%d.%m %H:%M"],
+                           cwd=config.BASE, capture_output=True, text=True, timeout=5).stdout.strip()
+    except Exception:
+        v = ""
+    await msg.answer(f"Версия: {esc(v) if v else 'неизвестна'}")
 
 
 @router.message(Command("quick"))
