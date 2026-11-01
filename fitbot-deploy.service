@@ -1,0 +1,6 @@
+[Unit]
+Description=fitbot auto-deploy
+
+[Service]
+Type=oneshot
+ExecStart=/opt/fitbot/deploy.sh
