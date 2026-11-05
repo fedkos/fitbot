@@ -698,11 +698,11 @@ async def show_image(cb: CallbackQuery, user: dict, sess: Session, prog: dict, p
     await cb.answer()
     await drop_photos(cb, sess)
     path, exact = found
-    caption = f"<b>{esc(step['name'])}</b>\n{esc(step['how'])}"
+    caption = f"<b>{esc(step['name'])}</b>"   # техника уже на карточке, лимит подписи 1024
     base = P.base_step(prog, ex_id)
     if not exact and step_idx != base:
         base_name = prog["exercises"][ex_id]["steps"][base]["name"]
-        caption += f"\n\nНа картинке базовый вариант: {esc(base_name)}."
+        caption += f"\nНа картинке базовый вариант: {esc(base_name)}."
     key = f"{path}:{path.stat().st_mtime_ns}"
     sent = await cb.message.answer_photo(file_ids.get(key) or FSInputFile(path), caption=caption)
     if sent.photo:
@@ -886,7 +886,7 @@ def render_quick_preview(sess: QuickSession, user: dict) -> tuple[str, InlineKey
 def render_quick_running(sess: QuickSession, user: dict) -> tuple[str, InlineKeyboardMarkup]:
     lines = [f"<b>⚡ Пошла тренировка</b> · таймер {quick_cfg['duration_sec'] // 60} мин на телефоне", ""]
     for i, (ex_id, idx, step) in enumerate(quick_items(sess, user), 1):
-        lines += [f"<b>{i}. {esc(step['name'])} — {Q.dose(step)}</b>", esc(step["how"])]
+        lines += [f"<b>{i}. {esc(step['name'])} — {Q.dose(step)}</b>", esc(step["how"]), ""]
     lines += ["", "Когда таймер прозвенит, доделай текущее упражнение и жми «Закончил»."]
     return "\n".join(lines), kb([btn("🏁 Закончил", qcb(sess, "finish"))], [btn("✖ Отмена", qcb(sess, "cancel"))])
 

@@ -199,14 +199,14 @@ def test_bot_flow():
     # картинка: показывается по кнопке, не дублируется, убирается при переходе, file_id кэшируется
     assert "🖼 Как делать" in labels() and "Bird-dog" in sent[-1]
     run(B.on_step(callback(msg), B.SCb(d="2026-10-05", slot="pm", idx=1, act="img")))
-    assert len(photos) == 1 and str(photos[0][0].path).endswith("birddog.jpg") and "Bird-dog" in photos[0][1]
+    assert len(photos) == 1 and str(photos[0][0].path).endswith("birddog.jpg") and photos[0][1].startswith("<b>Bird-dog")
     cb2 = callback(msg)
     run(B.on_step(cb2, B.SCb(d="2026-10-05", slot="pm", idx=1, act="img")))
     assert len(photos) == 1 and cb2.answer.call_args.args == ("Картинка уже выше",)
     run(B.on_step(callback(msg), B.SCb(d="2026-10-05", slot="pm", idx=1, act="harder")))
     assert msg.bot.delete_message.call_count == 1
     run(B.on_step(callback(msg), B.SCb(d="2026-10-05", slot="pm", idx=1, act="img")))
-    assert photos[1][0] == "FID101" and "базовый вариант: Bird-dog." in photos[1][1]
+    assert photos[1][0] == "FID101" and "базовый вариант: Bird-dog." in photos[1][1] and len(photos[1][1]) < 1024
     run(B.on_step(callback(msg), B.SCb(d="2026-10-05", slot="pm", idx=1, act="easier")))
     for i in range(1, 5):
         run(B.on_step(callback(msg), B.SCb(d="2026-10-05", slot="pm", idx=i, act="next")))
