@@ -119,11 +119,15 @@ def test_quick_logic():
     rng = random.Random(1)
     for slot in Q.SLOTS:
         ids = Q.pick(cfg, slot, [], rng)
-        assert len(ids) == 4 and len(set(ids)) == 4
+        assert len(ids) == len(cfg["templates"][slot]) and len(set(ids)) == len(ids)
         groups = [cfg["by_id"][i]["group"] for i in ids]
         assert all(slot in cfg["by_id"][i].get("slots", Q.SLOTS) for i in ids)
         if slot == "pm":
             assert "cardio" not in groups and (set(groups) & {"back", "mobility"})
+        if slot == "kb":
+            assert len(ids) == 5 and all(i.startswith("kb_") for i in ids) and "hinge" in groups
+        else:
+            assert not any(i.startswith("kb_") for i in ids)
     first = Q.pick(cfg, "am", [], rng)
     second = Q.pick(cfg, "am", first, rng)
     assert not set(first) & set(second)
@@ -238,7 +242,7 @@ def test_bot_flow():
     streak_before, log_before = B.streak(u), dict(u["log"])
     run(B.cmd_quick(message()))
     qs = B.quick_sessions[uid]
-    assert "Когда?" in sent[-1]
+    assert "Когда" in sent[-1]
     run(B.on_quick(callback(msg), B.QCb(sid=qs.sid, act="slot", val=2)))       # вечер
     assert qs.slot == "pm" and len(qs.items) == 4 and "уровень 2" in sent[-1]
     items0 = list(qs.items)

@@ -8,8 +8,8 @@ from pathlib import Path
 import progression as G
 
 LEVEL_MIN, LEVEL_MAX = 1, 5
-GROUPS = {"legs", "push", "core", "cardio", "back", "mobility"}
-SLOTS = ("am", "day", "pm")
+GROUPS = {"legs", "push", "core", "cardio", "back", "mobility", "hinge"}
+SLOTS = ("am", "day", "pm", "kb")   # kb: тренировка с гирей
 
 
 class QuickError(ValueError):

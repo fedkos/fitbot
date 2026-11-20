@@ -834,7 +834,7 @@ async def on_rpe(cb: CallbackQuery, callback_data: RCb) -> None:
 
 # ---------- разовая тренировка ----------
 
-QSLOT = {"am": "☀️ Утро", "day": "🌤 День", "pm": "🌙 Вечер"}
+QSLOT = {"am": "☀️ Утро", "day": "🌤 День", "pm": "🌙 Вечер", "kb": "🏋️ Гиря"}
 
 
 def qcb(sess: QuickSession, act: str, val: int = 0) -> QCb:
@@ -846,8 +846,9 @@ async def quick_begin(msg: Message, uid: int) -> None:
     quick_counter += 1
     sess = QuickSession(sid=quick_counter, level=Q.suggest_level(storage.user(uid)["quick"]))
     quick_sessions[uid] = sess
-    await msg.answer("⚡ Разовая тренировка, 10 минут. Когда?",
-                     reply_markup=kb([btn(QSLOT[s], qcb(sess, "slot", i)) for i, s in enumerate(Q.SLOTS)]))
+    rows = [[btn(QSLOT[s], qcb(sess, "slot", i)) for i, s in enumerate(Q.SLOTS) if s != "kb"],
+            [btn(QSLOT["kb"] + " (10 мин с гирей)", qcb(sess, "slot", Q.SLOTS.index("kb")))]]
+    await msg.answer("⚡ Разовая тренировка, 10 минут. Когда или с чем?", reply_markup=kb(*rows))
 
 
 def quick_items(sess: QuickSession, user: dict) -> list[tuple[str, int, dict]]:
@@ -873,6 +874,8 @@ def render_quick_preview(sess: QuickSession, user: dict) -> tuple[str, InlineKey
     items = quick_items(sess, user)
     for i, (ex_id, idx, step) in enumerate(items, 1):
         lines.append(f"{i}. {esc(step['name'])} — {Q.dose(step)}")
+    note = quick_cfg.get("slot_notes", {}).get(sess.slot)
+    lines += ["", esc(note)] if note else []
     lines += ["", "Между кругами отдых по самочувствию, техника важнее скорости.",
               "⬇⬆ меняют вариант конкретного упражнения, ± уровень всей тренировки."]
     rows = [[btn(f"{i} ⬇", qcb(sess, "easier", i - 1)), btn(f"{i} ⬆", qcb(sess, "harder", i - 1))]
